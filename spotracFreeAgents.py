@@ -3,7 +3,9 @@ import requests
 import os
 import csv
 
-years = [2011, 2012, 2013, 2014, 2015, 2016]
+# years = [2011, 2012, 2013, 2014, 2015, 2016]
+# years = [2011, 2012, 2014, 2015, 2016]
+years = [2016]
 positions = [['quarterback' , 'QB'],
 			 ['wide-receiver', 'WR'],
 			 ['tight-end', 'TE'],
@@ -22,7 +24,108 @@ positions = [['quarterback' , 'QB'],
 			 ['cornerback', 'CB'],
 			 ['safety', 'S']]
 
+positionsDictionary = {
+	'Quarterback' : 'QB',
+	'Wide Receiver' : 'WR',
+	'Tight End' : 'TE',
+	'Running Back' : 'RB',
+	'Fullback' : 'FB',
+	'Tackle' : 'T',
+	'Left Tackle' : 'LT',
+	'Right Tackle' : 'RT',
+	'Guard' : 'G',
+	'Center' : 'C',
+	'Defensive Line' : 'DL',
+	'Defensive End' : 'DE',
+	'Defensive Tackle' : 'DT',
+	'Linebacker' : 'LB',
+	'Outside Linebacker' : 'OLB',
+	'Inside Linebacker' : 'ILB',
+	'Cornerback' : 'CB',
+	'Safety' : 'S',
+	'Free Safety' : 'S',
+	'Strong Safety' : 'S',
+	'Kicker' : 'K',
+	'Punter' : 'P',
+	'Long Snapper' : 'LS',
+	'Punt Returner' : 'PR',
+	'Kick Returner' : 'KR'
 
+}
+
+teams = ['buffalo-bills', 'miami-dolphins', 'new-england-patriots', 'new-york-jets', 
+		 'baltimore-ravens', 'cincinnati-bengals', 'cleveland-browns', 'pittsburgh-steelers',
+		 'houston-texans', 'indianapolis-colts', 'jacksonville-jaguars', 'tennessee-titans', 
+		 'denver-broncos', 'kansas-city-chiefs', 'oakland-raiders', 'san-diego-chargers',
+		 'dallas-cowboys', 'new-york-giants', 'philadelphia-eagles', 'washington-redskins',
+		 'chicago-bears', 'detroit-lions', 'green-bay-packers', 'minnesota-vikings', 
+		 'atlanta-falcons', 'carolina-panthers', 'new-orleans-saints', 'tampa-bay-buccaneers',
+		 'arizona-cardinals', 'los-angeles-rams', 'seattle-seahawks', 'san-francisco-49ers'
+		]
+
+teamsDictionary =  {
+	'buffalo-bills' : 'BUF', 'miami-dolphins' : 'MIA', 'new-england-patriots' : 'NE', 'new-york-jets' : 'NYJ', 
+	'baltimore-ravens' : 'BAL', 'cincinnati-bengals' : 'CIN', 'cleveland-browns' : 'CLE', 'pittsburgh-steelers' : 'PIT',
+	'houston-texans' : 'HOU', 'indianapolis-colts' : 'IND', 'jacksonville-jaguars' : 'JAX', 'tennessee-titans' : 'TEN', 
+	'denver-broncos' : 'DEN', 'kansas-city-chiefs' : 'KC', 'oakland-raiders' : 'OAK', 'san-diego-chargers' : 'SD',
+	'dallas-cowboys' : 'DAL', 'new-york-giants' : 'NYG', 'philadelphia-eagles' : 'PHI', 'washington-redskins' : 'WAS',
+	'chicago-bears' : 'CHI', 'detroit-lions' : 'DET', 'green-bay-packers' : 'GB', 'minnesota-vikings' : 'MIN', 
+	'atlanta-falcons' : 'ATL', 'carolina-panthers' : 'CAR', 'new-orleans-saints' : 'NO', 'tampa-bay-buccaneers' : 'TB',
+	'arizona-cardinals' : 'AZ', 'los-angeles-rams' : 'LA', 'seattle-seahawks' : 'SEA', 'san-francisco-49ers' : 'SF'
+
+}
+
+for year in years:
+	for team in teams:
+
+	#Send request
+		url = 'http://www.spotrac.com/nfl/free-agents/' + str(year) + '/' + team + '/'
+		# print(url)
+
+		page = requests.get(url)
+		tree = html.fromstring(page.content)
+
+
+		players = tree.xpath('//tr/td//text()')
+		lst = list(range(len(players)))
+		# print(len(players))
+		# print(players)
+
+		# print(players)
+		salaries = []
+		numberSalaries = []
+		names = []
+		positions = []
+		teams = []
+		for i in lst:
+			if players[i] in positionsDictionary.values():
+				if players[i+3] in teamsDictionary.values():
+					if  len(players[i+6]) > 2:
+						names.append(players[i-1])
+						salaries.append(players[i+6])
+						positions.append(players[i])
+						teams.append(players[i+3])
+
+		#Converting string salaries to number salaries
+		for salary in salaries:
+			s = salary.replace("$","")
+			s = s.replace(",","")
+			s = s.replace(" ","")
+			k = int(s)
+			numberSalaries.append(k)
+
+		# print(len(numberSalaries))
+
+
+		with open(str(year) + ".csv", 'a') as csvfile:
+			filewriter = csv.writer(csvfile, delimiter = ',')
+			for i in range(len(names)):
+				filewriter.writerow([names[i], numberSalaries[i], teams[i], positions[i]])
+
+
+
+
+"""
 for year in years:
 	for position in positions:
 
@@ -73,6 +176,7 @@ for year in years:
 # loop throught and get the correct ones
 # write a csv file for each position per year
 
+"""
 
 
 
