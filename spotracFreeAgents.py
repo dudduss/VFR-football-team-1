@@ -117,10 +117,24 @@ for year in years:
 		# print(len(numberSalaries))
 
 
+
+
 		with open(str(year) + ".csv", 'a') as csvfile:
 			filewriter = csv.writer(csvfile, delimiter = ',')
 			for i in range(len(names)):
-				filewriter.writerow([names[i], numberSalaries[i], teams[i], positions[i]])
+				fullName = names[i].split(" ")
+				first = ""
+				middle = ""
+				last = ""
+
+				first = fullName[0]
+				if (len(fullName) == 3) :
+					middle = fullName[1]
+					last = fullName[2]
+				else :
+					last = fullName[1]
+
+				filewriter.writerow([middle + last, first, numberSalaries[i], teams[i], positions[i]])
 
 
 
