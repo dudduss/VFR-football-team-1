@@ -99,7 +99,7 @@ def ratings_salary(ratings, salary):
                                         "Position",Position,
                                        "Overall",Overall,"Salary",Salary,"Team",Team)
 
-    return (Ratings_Salary, missedPlayers)
+    return Ratings_Salary
 
 
 # In[21]:
@@ -154,12 +154,12 @@ ratingsfixed2012=fixtable(ratings2012)
 
 # In[24]:
 
-salary2016=Table.read_table('FBData/2016.csv')
-salary2015=Table.read_table('FBData/2015.csv')
-salary2014=Table.read_table('FBData/2014.csv')
-salary2013=Table.read_table('FBData/2013.csv')
-salary2012=Table.read_table('FBData/2012.csv')
-salary2011=Table.read_table('FBData/2011.csv')
+salary2016=Table.read_table('salary-data/2016.csv')
+salary2015=Table.read_table('salary-data/2015.csv')
+salary2014=Table.read_table('salary-data/2014.csv')
+salary2013=Table.read_table('salary-data/2013.csv')
+salary2012=Table.read_table('salary-data/2012.csv')
+salary2011=Table.read_table('salary-data/2011.csv')
 
 
 # In[25]:
@@ -173,11 +173,11 @@ ratingsandsalary2012=ratings_salary(ratingsfixed2012,salary2012)
 
 # In[26]:
 
-FA2016=ratings_salary(ratingsfixed2016,Table.read_table("FBData/2016FA.csv"))
-FA2015=ratings_salary(ratingsfixed2015,Table.read_table("FBData/2015FA.csv"))
-FA2014=ratings_salary(ratingsfixed2014,Table.read_table("FBData/2014FA.csv"))
-FA2013=ratings_salary(ratingsfixed2013,Table.read_table("FBData/2013FA.csv"))
-FA2012=ratings_salary(ratingsfixed2012,Table.read_table("FBData/2012FA.csv"))
+FA2016=ratings_salary(ratingsfixed2016,Table.read_table("free-agent-year-data/2016.csv"))
+FA2015=ratings_salary(ratingsfixed2015,Table.read_table("free-agent-year-data/2015.csv"))
+FA2014=ratings_salary(ratingsfixed2014,Table.read_table("free-agent-year-data/2014.csv"))
+FA2013=ratings_salary(ratingsfixed2013,Table.read_table("free-agent-year-data/2013.csv"))
+FA2012=ratings_salary(ratingsfixed2012,Table.read_table("free-agent-year-data/2012.csv"))
 
 
 # In[55]:
@@ -187,4 +187,8 @@ Projections2015=ProjectAllSignings(FA2015,ratingsandsalary2015,3)
 Projections2014=ProjectAllSignings(FA2014,ratingsandsalary2014,3)
 Projections2013=ProjectAllSignings(FA2013,ratingsandsalary2013,3)
 Projections2012=ProjectAllSignings(FA2012,ratingsandsalary2012,3)
+
+print(Projections2013)
+print(Projections2014)
+print(Projections2015)
 
