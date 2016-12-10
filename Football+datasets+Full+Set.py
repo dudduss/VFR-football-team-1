@@ -7,7 +7,7 @@ import numpy as np
 import regex as re
 from datascience import *
 import matplotlib
-get_ipython().magic('matplotlib inline')
+# get_ipython().magic('matplotlib inline')
 import matplotlib.pyplot as plots
 
 
@@ -104,7 +104,7 @@ def ratings_salary(ratings, salary):
 
 # In[21]:
 
-def ProjectAllSignings(SigningTable,SalaryTable,k):
+def ProjectAllSignings(SigningTable,SalaryTable,k,Year):
     
     Positions=SigningTable.column("Position")
     Overalls=SigningTable.column("Overall")
@@ -114,7 +114,8 @@ def ProjectAllSignings(SigningTable,SalaryTable,k):
     
     projections=make_array()
     standarddiffs=make_array()
-    
+    percentagediffs=make_array()
+    yeararray=make_array()
     for i in range(SigningTable.num_rows):
         temp=SalaryTable.where("Position",are.equal_to(Positions[i]))
         rating=Overalls[i]
@@ -122,10 +123,13 @@ def ProjectAllSignings(SigningTable,SalaryTable,k):
         projection=np.mean(neighbors)
         std=np.std(neighbors)
         standarddiff=(projection-SignedSalary[i])/std
+        percentagediff=(projection-SignedSalary[i])/projection
         projections=np.append(projections,projection)
         standarddiffs=np.append(standarddiffs,standarddiff)
-    return SigningTable.with_columns("Projected Salary",projections,"Difference",SignedSalary-projections,
-                                    "Standard Difference",standarddiffs)
+        percentagediffs=np.append(percentagediffs,percentagediff)
+        yeararray=np.append(yeararray,Year)
+    return SigningTable.with_columns("Year",yeararray,"Projected Salary",projections,"Difference",SignedSalary-projections,
+                                    "Standard Difference",standarddiffs,"Percent Difference",percentagediffs)
     
         
 
