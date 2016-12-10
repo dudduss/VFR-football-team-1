@@ -7,7 +7,7 @@ import numpy as np
 import regex as re
 from datascience import *
 import matplotlib
-get_ipython().magic('matplotlib inline')
+#get_ipython().magic('matplotlib inline')
 import matplotlib.pyplot as plots
 
 
