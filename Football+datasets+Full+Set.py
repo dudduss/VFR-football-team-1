@@ -8,6 +8,18 @@ import regex as re
 from datascience import *
 import matplotlib
 import matplotlib.pyplot as plots
+import csv
+
+teamsDictionary =  {
+    'Bills' : 'BUF', 'Dolphins' : 'MIA', 'Patriots' : 'NE', 'Jets' : 'NYJ', 
+    'Ravens' : 'BAL', 'Bengals' : 'CIN', 'Browns' : 'CLE', 'Steelers' : 'PIT',
+    'Texans' : 'HOU', 'Colts' : 'IND', 'Jaguars' : 'JAX', 'Titans' : 'TEN', 
+    'Broncos' : 'DEN', 'Chiefs' : 'KC', 'Raiders' : 'OAK', 'Chargers' : 'SD',
+    'Cowboys' : 'DAL', 'Giants' : 'NYG', 'Eagles' : 'PHI', 'Redskins' : 'WAS',
+    'Bears' : 'CHI', 'Lions' : 'DET', 'Packers' : 'GB', 'Vikings' : 'MIN', 
+    'Falcons' : 'ATL', 'Panthers' : 'CAR', 'Saints' : 'NO', 'Buccaneers' : 'TB',
+    'Cardinals' : 'AZ', 'Rams' : 'LA', 'Seahawks' : 'SEA', '49ers' : 'SF'
+}
 
 
 # In[13]:
@@ -143,6 +155,7 @@ ratings2012=Table.read_table('Madden Ratings/madden_nfl_13_-_full_player_ratings
 ratings2011=Table.read_table('Madden Ratings/madden_nfl_12_-_full_player_ratings.csv')
 
 
+
 # In[23]:
 
 ratingsfixed2016=fixtable(ratings2016)
@@ -191,6 +204,29 @@ Projections2014=ProjectAllSignings(FA2014,ratingsandsalary2014,3,2014)
 Projections2013=ProjectAllSignings(FA2013,ratingsandsalary2013,3,2014)
 Projections2012=ProjectAllSignings(FA2012,ratingsandsalary2012,3,2012)
 Projections2011=ProjectAllSignings(FA2011, ratingsandsalary2011,3,2011)
+
+# print(Projections2016)
+
+projections = [Projections2016, Projections2015, Projections2014, Projections2013, Projections2012, Projections2011]
+
+filename = "master-data.csv"
+with open(filename, 'w') as csvfile :
+    filewriter = csv.writer(csvfile, delimiter = ',')
+
+    filewriter.writerow(["Last Name" , "First Name" , "Position" , "Overall" , "Salary" , "Team" , "Year" , "Projected Salary" , "Difference" , "Standard Difference" , "Percent Difference"])
+
+    for projection in projections:
+        for row in projection.rows:
+            # print(row)
+            filewriter.writerow(
+                [row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]])
+
+
+# for row in Projections2011:
+#     print(row)
+
+# print(Projections2011.rows)
+
 
 print(Projections2011)
 print(Projections2012)
