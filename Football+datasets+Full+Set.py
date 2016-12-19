@@ -140,6 +140,7 @@ ratings2015=Table.read_table('Madden Ratings/madden_nfl_16_-_full_player_ratings
 ratings2014=Table.read_table('Madden Ratings/madden_nfl_15_-_full_player_ratings.csv')
 ratings2013=Table.read_table('Madden Ratings/madden_nfl_25_-_full_player_ratings.csv')
 ratings2012=Table.read_table('Madden Ratings/madden_nfl_13_-_full_player_ratings.csv')
+ratings2011=Table.read_table('Madden Ratings/madden_nfl_12_-_full_player_ratings.csv')
 
 
 # In[23]:
@@ -149,6 +150,7 @@ ratingsfixed2015=fixtable(ratings2015)
 ratingsfixed2014=fixtable(ratings2014)
 ratingsfixed2013=fixtable(ratings2013)
 ratingsfixed2012=fixtable(ratings2012)
+ratingsfixed2011=fixtable(ratings2011)
 
 
 # In[24]:
@@ -168,6 +170,7 @@ ratingsandsalary2015=ratings_salary(ratingsfixed2015,salary2015)
 ratingsandsalary2014=ratings_salary(ratingsfixed2014,salary2014)
 ratingsandsalary2013=ratings_salary(ratingsfixed2013,salary2013)
 ratingsandsalary2012=ratings_salary(ratingsfixed2012,salary2012)
+ratingsandsalary2011=ratings_salary(ratingsfixed2011,salary2011)
 
 
 # In[26]:
@@ -177,17 +180,23 @@ FA2015=ratings_salary(ratingsfixed2015,Table.read_table("free-agent-year-data/20
 FA2014=ratings_salary(ratingsfixed2014,Table.read_table("free-agent-year-data/2014.csv"))
 FA2013=ratings_salary(ratingsfixed2013,Table.read_table("free-agent-year-data/2013.csv"))
 FA2012=ratings_salary(ratingsfixed2012,Table.read_table("free-agent-year-data/2012.csv"))
+FA2011=ratings_salary(ratingsfixed2011, Table.read_table("free-agent-year-data/2011.csv"))
 
 
 # In[55]:
 
-Projections2016=ProjectAllSignings(FA2016,ratingsandsalary2016,3)
-Projections2015=ProjectAllSignings(FA2015,ratingsandsalary2015,3)
-Projections2014=ProjectAllSignings(FA2014,ratingsandsalary2014,3)
-Projections2013=ProjectAllSignings(FA2013,ratingsandsalary2013,3)
-Projections2012=ProjectAllSignings(FA2012,ratingsandsalary2012,3)
+Projections2016=ProjectAllSignings(FA2016,ratingsandsalary2016,3,2016)
+Projections2015=ProjectAllSignings(FA2015,ratingsandsalary2015,3,2015)
+Projections2014=ProjectAllSignings(FA2014,ratingsandsalary2014,3,2014)
+Projections2013=ProjectAllSignings(FA2013,ratingsandsalary2013,3,2014)
+Projections2012=ProjectAllSignings(FA2012,ratingsandsalary2012,3,2012)
+Projections2011=ProjectAllSignings(FA2011, ratingsandsalary2011,3,2011)
 
+print(Projections2011)
+print(Projections2012)
 print(Projections2013)
 print(Projections2014)
 print(Projections2015)
+print(Projections2016)
+
 
