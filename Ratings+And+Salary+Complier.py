@@ -71,7 +71,7 @@ def fixtable(tab):
 #Input a table containing separate columns for Last Name, First Name, and Overall ratings,
 #And a table of salaries containing First Name, Last Name, Average Salary, Team, and Position. 
 #Returns a Table combining both inputed tables. 
-def ratings_salary(ratings, salary):
+def ratings_salary(ratings, salary, year):
     salaryLnamearr=salary.column("Last Name")
     salaryFnamearr=salary.column("First Name")
     salaryarr=salary.column("Average Salary")
@@ -97,7 +97,7 @@ def ratings_salary(ratings, salary):
             Salary=np.append(Salary,salaryarr[i]/1000)
             Team=np.append(Team,teamarr[i])
             Position=np.append(Position,positionarr[i])
-        elif (ratingsdata.where("Position",are.containing(positionarr[i])).num_rows==1):
+        elif (ratingsdatapos.num_rows==1):
             LastName=np.append(LastName,salaryLnamearr[i])
             FirstName=np.append(FirstName,salaryFnamearr[i])
             Overall=np.append(Overall,ratingsdatapos.column("Overall")[0])
@@ -110,40 +110,15 @@ def ratings_salary(ratings, salary):
     Ratings_Salary=Table().with_columns("Last Name",LastName,"First Name",FirstName,
                                         "Position",Position,
                                        "Overall",Overall,"Salary",Salary,"Team",Team)
-
+    def addyear(tbl,yr):
+    	yeararr=make_array()
+    	for _ in range(tbl.num_rows):
+    		yeararr=np.append(yeararr,yr)
+    	return tbl.with_column("Year",yeararr)
+    Ratings_Salary=addyear(Ratings_Salary,year)
     return Ratings_Salary
 
 
-# In[21]:
-
-def ProjectAllSignings(SigningTable,SalaryTable,k,Year):
-    
-    Positions=SigningTable.column("Position")
-    Overalls=SigningTable.column("Overall")
-    SignedSalary=SigningTable.column("Salary")
-    
-    Salaries=SalaryTable.column("Salary")
-    
-    projections=make_array()
-    standarddiffs=make_array()
-    percentagediffs=make_array()
-    yeararray=make_array()
-    for i in range(SigningTable.num_rows):
-        temp=SalaryTable.where("Position",are.equal_to(Positions[i]))
-        rating=Overalls[i]
-        neighbors=temp.where("Overall",are.between(rating-k,rating+k+1)).column("Salary")
-        projection=np.mean(neighbors)
-        std=np.std(neighbors)
-        standarddiff=(projection-SignedSalary[i])/std
-        percentagediff=(projection-SignedSalary[i])/projection
-        projections=np.append(projections,projection)
-        standarddiffs=np.append(standarddiffs,standarddiff)
-        percentagediffs=np.append(percentagediffs,percentagediff)
-        yeararray=np.append(yeararray,Year)
-    return SigningTable.with_columns("Year",yeararray,"Projected Salary",projections,"Difference",SignedSalary-projections,
-                                    "Standard Difference",standarddiffs,"Percent Difference",percentagediffs)
-    
-        
 
 
 # In[22]:
@@ -179,61 +154,32 @@ salary2011=Table.read_table('salary-data/2011.csv')
 
 # In[25]:
 
-ratingsandsalary2016=ratings_salary(ratingsfixed2016,salary2016)
-ratingsandsalary2015=ratings_salary(ratingsfixed2015,salary2015)
-ratingsandsalary2014=ratings_salary(ratingsfixed2014,salary2014)
-ratingsandsalary2013=ratings_salary(ratingsfixed2013,salary2013)
-ratingsandsalary2012=ratings_salary(ratingsfixed2012,salary2012)
-ratingsandsalary2011=ratings_salary(ratingsfixed2011,salary2011)
+ratingsandsalary2016=ratings_salary(ratingsfixed2016,salary2016,2016)
+ratingsandsalary2015=ratings_salary(ratingsfixed2015,salary2015,2015)
+ratingsandsalary2014=ratings_salary(ratingsfixed2014,salary2014,2014)
+ratingsandsalary2013=ratings_salary(ratingsfixed2013,salary2013,2013)
+ratingsandsalary2012=ratings_salary(ratingsfixed2012,salary2012,2012)
+ratingsandsalary2011=ratings_salary(ratingsfixed2011,salary2011,2011)
 
 
-# In[26]:
-
-FA2016=ratings_salary(ratingsfixed2016,Table.read_table("free-agent-year-data/2016.csv"))
-FA2015=ratings_salary(ratingsfixed2015,Table.read_table("free-agent-year-data/2015.csv"))
-FA2014=ratings_salary(ratingsfixed2014,Table.read_table("free-agent-year-data/2014.csv"))
-FA2013=ratings_salary(ratingsfixed2013,Table.read_table("free-agent-year-data/2013.csv"))
-FA2012=ratings_salary(ratingsfixed2012,Table.read_table("free-agent-year-data/2012.csv"))
-FA2011=ratings_salary(ratingsfixed2011, Table.read_table("free-agent-year-data/2011.csv"))
 
 
-# In[55]:
-
-Projections2016=ProjectAllSignings(FA2016,ratingsandsalary2016,3,2016)
-Projections2015=ProjectAllSignings(FA2015,ratingsandsalary2015,3,2015)
-Projections2014=ProjectAllSignings(FA2014,ratingsandsalary2014,3,2014)
-Projections2013=ProjectAllSignings(FA2013,ratingsandsalary2013,3,2014)
-Projections2012=ProjectAllSignings(FA2012,ratingsandsalary2012,3,2012)
-Projections2011=ProjectAllSignings(FA2011, ratingsandsalary2011,3,2011)
 
 # print(Projections2016)
 
-projections = [Projections2016, Projections2015, Projections2014, Projections2013, Projections2012, Projections2011]
+projections = [ratingsandsalary2016, ratingsandsalary2015, ratingsandsalary2014, ratingsandsalary2013, ratingsandsalary2012, ratingsandsalary2011]
 
-filename = "master-data.csv"
+filename = "ratings-and-salary.csv"
 with open(filename, 'w') as csvfile :
     filewriter = csv.writer(csvfile, delimiter = ',')
 
-    filewriter.writerow(["Last Name" , "First Name" , "Position" , "Overall" , "Salary" , "Team" , "Year" , "Projected Salary" , "Difference" , "Standard Difference" , "Percent Difference"])
+    filewriter.writerow(["Last Name" , "First Name" , "Position" , "Overall" , "Salary" , "Team","Year" ])
 
     for projection in projections:
         for row in projection.rows:
             # print(row)
             filewriter.writerow(
-                [row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]])
+                [row[0], row[1], row[2], row[3], row[4], row[5],row[6]])
 
-
-# for row in Projections2011:
-#     print(row)
-
-# print(Projections2011.rows)
-
-
-print(Projections2011)
-print(Projections2012)
-print(Projections2013)
-print(Projections2014)
-print(Projections2015)
-print(Projections2016)
 
 
