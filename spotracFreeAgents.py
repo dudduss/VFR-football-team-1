@@ -5,7 +5,7 @@ import csv
 
 # years = [2011, 2012, 2013, 2014, 2015, 2016]
 # years = [2011, 2012, 2014, 2015, 2016]
-years = [2016]
+years = [2011]
 positions = [['quarterback' , 'QB'],
 			 ['wide-receiver', 'WR'],
 			 ['tight-end', 'TE'],
@@ -63,19 +63,26 @@ teams = ['buffalo-bills', 'miami-dolphins', 'new-england-patriots', 'new-york-je
 		 'arizona-cardinals', 'los-angeles-rams', 'seattle-seahawks', 'san-francisco-49ers'
 		]
 
+# teams = ['arizona-cardinals', 'jacksonville-jaguars']
+
 teamsDictionary =  {
 	'buffalo-bills' : 'BUF', 'miami-dolphins' : 'MIA', 'new-england-patriots' : 'NE', 'new-york-jets' : 'NYJ', 
 	'baltimore-ravens' : 'BAL', 'cincinnati-bengals' : 'CIN', 'cleveland-browns' : 'CLE', 'pittsburgh-steelers' : 'PIT',
-	'houston-texans' : 'HOU', 'indianapolis-colts' : 'IND', 'jacksonville-jaguars' : 'JAX', 'tennessee-titans' : 'TEN', 
+	'houston-texans' : 'HOU', 'indianapolis-colts' : 'IND', 'jacksonville-jaguars' : 'JAC', 'tennessee-titans' : 'TEN', 
 	'denver-broncos' : 'DEN', 'kansas-city-chiefs' : 'KC', 'oakland-raiders' : 'OAK', 'san-diego-chargers' : 'SD',
 	'dallas-cowboys' : 'DAL', 'new-york-giants' : 'NYG', 'philadelphia-eagles' : 'PHI', 'washington-redskins' : 'WAS',
 	'chicago-bears' : 'CHI', 'detroit-lions' : 'DET', 'green-bay-packers' : 'GB', 'minnesota-vikings' : 'MIN', 
 	'atlanta-falcons' : 'ATL', 'carolina-panthers' : 'CAR', 'new-orleans-saints' : 'NO', 'tampa-bay-buccaneers' : 'TB',
-	'arizona-cardinals' : 'AZ', 'los-angeles-rams' : 'LA', 'seattle-seahawks' : 'SEA', 'san-francisco-49ers' : 'SF'
+	'arizona-cardinals' : 'ARI', 'los-angeles-rams' : 'LA', 'seattle-seahawks' : 'SEA', 'san-francisco-49ers' : 'SF'
 
 }
 
 for year in years:
+
+	with open(str(year) + ".csv", 'a') as csvfile:
+		filewriter = csv.writer(csvfile, delimiter = ',')
+		filewriter.writerow(["Last Name", "First Name", "Average Salary", "Team", "Position", "Age"])
+
 	for team in teams:
 
 	#Send request
@@ -97,6 +104,7 @@ for year in years:
 		names = []
 		positions = []
 		teams = []
+		ages = []
 		for i in lst:
 			if players[i] in positionsDictionary.values():
 				if players[i+3] in teamsDictionary.values():
@@ -105,6 +113,7 @@ for year in years:
 						salaries.append(players[i+6])
 						positions.append(players[i])
 						teams.append(players[i+3])
+						ages.append(players[i+1])
 
 		#Converting string salaries to number salaries
 		for salary in salaries:
@@ -115,10 +124,6 @@ for year in years:
 			numberSalaries.append(k)
 
 		# print(len(numberSalaries))
-
-
-
-
 		with open(str(year) + ".csv", 'a') as csvfile:
 			filewriter = csv.writer(csvfile, delimiter = ',')
 			for i in range(len(names)):
@@ -134,7 +139,7 @@ for year in years:
 				else :
 					last = fullName[1]
 
-				filewriter.writerow([middle + last, first, numberSalaries[i], teams[i], positions[i]])
+				filewriter.writerow([middle + last, first, numberSalaries[i], teams[i], positions[i], ages[i]])
 
 
 

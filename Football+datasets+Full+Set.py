@@ -77,6 +77,7 @@ def ratings_salary(ratings, salary):
     salaryarr=salary.column("Average Salary")
     teamarr=salary.column("Team")
     positionarr=salary.column("Position")
+    # agearr=salary.column("Age")
     fixednames=normalizeName(salary.column("Last Name"),salary.column("First Name"))
     fixedratingnames=normalizeName(ratings.column("Last Name"),ratings.column("First Name"))
     ratings=ratings.with_column("Fixed Name",fixedratingnames)
@@ -86,6 +87,7 @@ def ratings_salary(ratings, salary):
     Salary=make_array()
     Team=make_array()
     Position=make_array()
+    # Age=make_array()
     missedPlayers = []
     for i in range(salary.num_rows):
         ratingsdata=ratings.where("Fixed Name",are.containing(fixednames[i]))
@@ -97,6 +99,7 @@ def ratings_salary(ratings, salary):
             Salary=np.append(Salary,salaryarr[i]/1000)
             Team=np.append(Team,teamarr[i])
             Position=np.append(Position,positionarr[i])
+            # Age=np.append(Age, agearr[i])
         elif (ratingsdata.where("Position",are.containing(positionarr[i])).num_rows==1):
             LastName=np.append(LastName,salaryLnamearr[i])
             FirstName=np.append(FirstName,salaryFnamearr[i])
@@ -104,12 +107,58 @@ def ratings_salary(ratings, salary):
             Salary=np.append(Salary,salaryarr[i]/1000)
             Team=np.append(Team,teamarr[i])
             Position=np.append(Position,positionarr[i])
+            # Age=np.append(Age, agearr[i])
         else:
             missedPlayers.append((fixednames[i]))
 
     Ratings_Salary=Table().with_columns("Last Name",LastName,"First Name",FirstName,
                                         "Position",Position,
                                        "Overall",Overall,"Salary",Salary,"Team",Team)
+
+    return Ratings_Salary
+
+def ratings_salary_fa(ratings, salary):
+    salaryLnamearr=salary.column("Last Name")
+    salaryFnamearr=salary.column("First Name")
+    salaryarr=salary.column("Average Salary")
+    teamarr=salary.column("Team")
+    positionarr=salary.column("Position")
+    agearr=salary.column("Age")
+    fixednames=normalizeName(salary.column("Last Name"),salary.column("First Name"))
+    fixedratingnames=normalizeName(ratings.column("Last Name"),ratings.column("First Name"))
+    ratings=ratings.with_column("Fixed Name",fixedratingnames)
+    LastName=make_array()
+    FirstName=make_array()
+    Overall=make_array()
+    Salary=make_array()
+    Team=make_array()
+    Position=make_array()
+    Age=make_array()
+    missedPlayers = []
+    for i in range(salary.num_rows):
+        ratingsdata=ratings.where("Fixed Name",are.containing(fixednames[i]))
+        if (ratingsdata.num_rows==1):
+            LastName=np.append(LastName,salaryLnamearr[i])
+            FirstName=np.append(FirstName,salaryFnamearr[i])
+            Overall=np.append(Overall,ratingsdata.column("Overall")[0])
+            Salary=np.append(Salary,salaryarr[i]/1000)
+            Team=np.append(Team,teamarr[i])
+            Position=np.append(Position,positionarr[i])
+            Age=np.append(Age, agearr[i])
+        elif (ratingsdata.where("Position",are.containing(positionarr[i])).num_rows==1):
+            LastName=np.append(LastName,salaryLnamearr[i])
+            FirstName=np.append(FirstName,salaryFnamearr[i])
+            Overall=np.append(Overall,ratingsdata.column("Overall")[0])
+            Salary=np.append(Salary,salaryarr[i]/1000)
+            Team=np.append(Team,teamarr[i])
+            Position=np.append(Position,positionarr[i])
+            Age=np.append(Age, agearr[i])
+        else:
+            missedPlayers.append((fixednames[i]))
+
+    Ratings_Salary=Table().with_columns("Last Name",LastName,"First Name",FirstName,
+                                        "Position",Position,
+                                       "Overall",Overall,"Salary",Salary,"Team",Team, "Age", Age)
 
     return Ratings_Salary
 
@@ -144,6 +193,14 @@ def ProjectAllSignings(SigningTable,SalaryTable,k,Year):
                                     "Standard Difference",standarddiffs,"Percent Difference",percentagediffs)
     
         
+# ratings2016=Table.read_table('Madden Ratings/madden_nfl_17_-_full_player_ratings.csv')
+# ratingsfixed2016=fixtable(ratings2016)
+# salary2016=Table.read_table('salary-data/2016.csv')
+# ratingsandsalary2016=ratings_salary(ratingsfixed2016,salary2016)
+# FA2016=ratings_salary_fa(ratingsfixed2016,Table.read_table("free-agent-year-data/2016.csv"))
+# Projections2016=ProjectAllSignings(FA2016,ratingsandsalary2016,3,2016)
+# print(Projections2016)
+
 
 
 # In[22]:
@@ -189,12 +246,12 @@ ratingsandsalary2011=ratings_salary(ratingsfixed2011,salary2011)
 
 # In[26]:
 
-FA2016=ratings_salary(ratingsfixed2016,Table.read_table("free-agent-year-data/2016.csv"))
-FA2015=ratings_salary(ratingsfixed2015,Table.read_table("free-agent-year-data/2015.csv"))
-FA2014=ratings_salary(ratingsfixed2014,Table.read_table("free-agent-year-data/2014.csv"))
-FA2013=ratings_salary(ratingsfixed2013,Table.read_table("free-agent-year-data/2013.csv"))
-FA2012=ratings_salary(ratingsfixed2012,Table.read_table("free-agent-year-data/2012.csv"))
-FA2011=ratings_salary(ratingsfixed2011, Table.read_table("free-agent-year-data/2011.csv"))
+FA2016=ratings_salary_fa(ratingsfixed2016,Table.read_table("free-agent-year-data/2016.csv"))
+FA2015=ratings_salary_fa(ratingsfixed2015,Table.read_table("free-agent-year-data/2015.csv"))
+FA2014=ratings_salary_fa(ratingsfixed2014,Table.read_table("free-agent-year-data/2014.csv"))
+FA2013=ratings_salary_fa(ratingsfixed2013,Table.read_table("free-agent-year-data/2013.csv"))
+FA2012=ratings_salary_fa(ratingsfixed2012,Table.read_table("free-agent-year-data/2012.csv"))
+FA2011=ratings_salary_fa(ratingsfixed2011, Table.read_table("free-agent-year-data/2011.csv"))
 
 
 # In[55]:
@@ -202,7 +259,7 @@ FA2011=ratings_salary(ratingsfixed2011, Table.read_table("free-agent-year-data/2
 Projections2016=ProjectAllSignings(FA2016,ratingsandsalary2016,3,2016)
 Projections2015=ProjectAllSignings(FA2015,ratingsandsalary2015,3,2015)
 Projections2014=ProjectAllSignings(FA2014,ratingsandsalary2014,3,2014)
-Projections2013=ProjectAllSignings(FA2013,ratingsandsalary2013,3,2014)
+Projections2013=ProjectAllSignings(FA2013,ratingsandsalary2013,3,2013)
 Projections2012=ProjectAllSignings(FA2012,ratingsandsalary2012,3,2012)
 Projections2011=ProjectAllSignings(FA2011, ratingsandsalary2011,3,2011)
 
@@ -214,26 +271,26 @@ filename = "master-data.csv"
 with open(filename, 'w') as csvfile :
     filewriter = csv.writer(csvfile, delimiter = ',')
 
-    filewriter.writerow(["Last Name" , "First Name" , "Position" , "Overall" , "Salary" , "Team" , "Year" , "Projected Salary" , "Difference" , "Standard Difference" , "Percent Difference"])
+    filewriter.writerow(["Last Name" , "First Name" , "Position" , "Overall" , "Salary" , "Team" , "Age", "Year" , "Projected Salary" , "Difference" , "Standard Difference" , "Percent Difference"])
 
     for projection in projections:
         for row in projection.rows:
             # print(row)
             filewriter.writerow(
-                [row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]])
+                [row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11]])
 
 
-# for row in Projections2011:
-#     print(row)
+# # for row in Projections2011:
+# #     print(row)
 
-# print(Projections2011.rows)
+# # print(Projections2011.rows)
 
 
-print(Projections2011)
-print(Projections2012)
-print(Projections2013)
-print(Projections2014)
-print(Projections2015)
-print(Projections2016)
+# print(Projections2011)
+# print(Projections2012)
+# print(Projections2013)
+# print(Projections2014)
+# print(Projections2015)
+# print(Projections2016)
 
 
